@@ -26,11 +26,9 @@ Bundle 'scrooloose/syntastic'
 Bundle 'taglist.vim'
 Bundle "junegunn/seoul256.vim"
 Bundle 'tpope/vim-fugitive'
-Bundle 'StanAngeloff/php.vim'
 Bundle 'mileszs/ack.vim'
 Bundle 'Tail-Bundle'
 Bundle 'tpope/vim-repeat'
-Bundle 'scrooloose/nerdtree'
 Bundle 'jelera/vim-javascript-syntax'
 Bundle 'simplefold'
 Bundle 'MarcWeber/vim-addon-mw-utils'
@@ -49,10 +47,17 @@ Bundle 'argtextobj.vim'
 Bundle 'ton/vim-bufsurf'
 Bundle 'kana/vim-textobj-user'
 Bundle 'Raimondi/vim_search_objects'
-Bundle 'justinmk/vim-sneak'
+Bundle 'rhysd/clever-f.vim'
+Bundle 'goldfeld/vim-seek'
 Bundle 'kana/vim-textobj-indent'
 Bundle 'tpope/vim-dispatch'
 Bundle 'davidhalter/jedi-vim'
+Bundle 'othree/javascript-libraries-syntax.vim'
+Bundle 'joonty/vdebug.git'
+Bundle 't9md/vim-smalls'
+
+
+Bundle 'scrooloose/nerdtree'
 
 map <f10> <esc>:disablephpfolds<cr>
 map <f12> <esc>:TlistToggle<cr>
@@ -102,23 +107,24 @@ let g:mta_filetypes = {
         \}
  
 
-"returns true iff is NERDTree open/active
-function! rc:isNTOpen()        
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
-
-" calls NERDTreeFind iff NERDTree is active, current window contains a
-"    modifiable file, and we're not in vimdiff
-function! rc:syncTree()
-	   if rc:isNTOpen()
-      		NERDTreeToggle
-       else
-      		NERDTreeFind
-      endif
-endfunction
 
 
-map <leader>m :call rc:syncTree()<cr>
+" " returns true iff is NERDTree open/active
+" function! RcIsNTOpen()        
+"   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+" endfunction
+
+" " calls NERDTreeFind iff NERDTree is active, current window contains a modifiable file, and we're not in vimdiff
+" function! RcSyncTree()
+"   if &modifiable && RcIsNTOpen() && strlen(expand('%')) > 0 && !&diff
+"     NERDTreeFind
+"     wincmd p
+"   endif
+" endfunction
+
+"autocmd BufEnter * call RcSyncTree()
+
+map <leader>m :NERDTreeFind<cr>
 
 nmap <leader>w :w!<cr>
 vmap č :
@@ -134,7 +140,6 @@ cmap ć %
 vmap ć %
 
 map <space> /
-
 
 nmap <Leader>a  :call AckCommand()<CR>
 
@@ -229,7 +234,8 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 "allowing to open new buffer without saving current
 set hidden
 set t_Co=256
-colors seoul256
+colo seoul256
+let g:seoul256_background = 236
 
 set fillchars+=stl:\ ,stlnc:\
 let g:notes_directories = ['~/docs/notes']
@@ -244,3 +250,17 @@ let g:jedi#show_call_signatures = "0"
 autocmd FileType python setlocal completeopt-=preview
 
 let NERDTreeIgnore=['__pycache__', '__init__.py', '\~$']
+let g:smalls_auto_jump=1
+let g:smalls_auto_jump_timeout=0.1
+let g:smalls_exit_at_notfound=1
+nmap m <Plug>(smalls)
+
+" change JumpTarget color to 'red'
+let g:smalls_highlight = {
+	      \ 'SmallsJumpTarget':
+	      \     [['NONE', 'NONE', 'red'],[ 'bold', 'NONE', 'red']],
+	      \ }
+
+set timeoutlen=1000 ttimeoutlen=0
+
+au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
