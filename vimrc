@@ -20,8 +20,13 @@ call vundle#rc()
 
 " let vundle manage vundle
 Bundle 'gmarik/vundle'
+Bundle 'swekaj/php-foldexpr.vim'
+Bundle 'mattn/gist-vim'
+Bundle 'mattn/webapi-vim'
 Bundle 'Townk/vim-autoclose'
 Bundle 'Command-T'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/vimproc.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'taglist.vim'
 Bundle "junegunn/seoul256.vim"
@@ -55,11 +60,16 @@ Bundle 'davidhalter/jedi-vim'
 Bundle 'othree/javascript-libraries-syntax.vim'
 Bundle 'joonty/vdebug.git'
 Bundle 't9md/vim-smalls'
+" vim-react-snippets:
+Bundle "justinj/vim-react-snippets"
+" SnipMate and its dependencies:
+Bundle "garbas/vim-snipmate"
 
+" Other sets of snippets (optional):
+Bundle "honza/vim-snippets"
 
 Bundle 'scrooloose/nerdtree'
 
-map <f10> <esc>:disablephpfolds<cr>
 map <f12> <esc>:TlistToggle<cr>
 map <f3> :PhpSearchContext<cr>
 
@@ -264,3 +274,12 @@ let g:smalls_highlight = {
 set timeoutlen=1000 ttimeoutlen=0
 
 au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+
+let g:gist_post_private = 1
+
+nnoremap <leader>y :<C-u>Unite -no-split -buffer-name=yank    history/yank<cr>
+let g:unite_source_rec_unit = 100
+let g:unite_source_history_yank_enable = 1
+let g:unite_enable_start_insert = 1
+let g:unite_data_directory='~/.vim/unite'
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
