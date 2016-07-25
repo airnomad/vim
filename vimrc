@@ -213,6 +213,9 @@ let g:smalls_auto_jump_timeout=0.1
 let g:smalls_exit_at_notfound=1
 nmap j <Plug>(smalls)
 
+if executable('ag')
+   set grepprg=ag\ -o\ -U\ --nogroup\ --nocolor 
+ endif
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
 map k gk
@@ -228,33 +231,3 @@ let g:smalls_highlight = {
 set timeoutlen=1000 ttimeoutlen=0
 
 au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
-
-let g:unite_enable_start_insert = 1
-let g:unite_force_overwrite_statusline = 0
-let g:unite_winheight = 20
-let g:unite_source_rec_unit = 100
-let g:unite_data_directory='~/.vim/unite'
-let g:unite_source_history_yank_enable = 1
-
-call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
-      \ 'ignore_pattern', join([
-      \ '\.git/',
-      \ ], '\|'))
-
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-
-nnoremap <leader>r :<C-u>Unite  -buffer-name=files   -start-insert buffer file_rec/async:!<cr>
-
-autocmd FileType unite call s:unite_settings()
-
-function! s:unite_settings()
-  let b:SuperTabDisabled=1
-  imap <buffer> <C-j>   <Plug>(unite_select_next_line)
-  imap <buffer> <C-k>   <Plug>(unite_select_previous_line)
-  imap <silent><buffer><expr> <C-x> unite#do_action('split')
-  imap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  imap <silent><buffer><expr> <C-t> unite#do_action('tabopen')
-
-  nmap <buffer> <ESC> <Plug>(unite_exit)
-endfunction
