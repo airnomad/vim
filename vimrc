@@ -12,6 +12,19 @@
     set rtp+=~/.vim/bundle/vundle/
     call vundle#rc()
 
+function! NERDTreeToggleInCurDir()
+  " If NERDTree is open in the current buffer
+  if (exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1)
+    exe ":NERDTreeClose"
+  else
+    if (expand("%:t") != '')
+      exe ":NERDTreeFind"
+    else
+      exe ":NERDTreeToggle"
+    endif
+  endif
+endfunction
+
 syntax on
 set nocompatible               " be improved
 filetype off                   " required!
@@ -19,19 +32,20 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 " let vundle manage vundle
+Bundle 'posva/vim-vue'
+Bundle 'thaerkh/vim-workspace'
+Bundle 'metakirby5/codi.vim'
 Bundle 'gmarik/vundle'
-Bundle 'swekaj/php-foldexpr.vim'
+Bundle 'rayburgemeestre/phpfolding.vim'
 Bundle 'Townk/vim-autoclose'
-Bundle 'Command-T'
+Bundle 'junegunn/fzf.vim'
+Bundle 'junegunn/fzf'
 Bundle 'Shougo/unite.vim'
 Bundle 'Shougo/vimproc.vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'taglist.vim'
 Bundle "junegunn/seoul256.vim"
 Bundle 'mileszs/ack.vim'
 Bundle 'tpope/vim-repeat'
 Bundle 'jelera/vim-javascript-syntax'
-Bundle 'simplefold'
 Bundle 'tpope/vim-surround'
 Bundle 'matchit.zip'
 Bundle 'groenewege/vim-less'
@@ -41,7 +55,7 @@ Bundle 'bufkill.vim'
 Bundle 'phtml.vim'
 Bundle 'yonchu/accelerated-smooth-scroll'
 Bundle 'bling/vim-airline'
-Bundle 'tpope/vim-commentary'
+Bundle 'tomtom/tcomment_vim'
 Bundle 'argtextobj.vim'
 Bundle 'ton/vim-bufsurf'
 Bundle 'kana/vim-textobj-user'
@@ -53,12 +67,22 @@ Bundle 'tpope/vim-dispatch'
 Bundle 'davidhalter/jedi-vim'
 Bundle 'othree/javascript-libraries-syntax.vim'
 Bundle 'joonty/vdebug.git'
-Bundle 't9md/vim-smalls'
 Bundle 'scrooloose/nerdtree'
 Bundle 'szw/vim-maximizer'
+Bundle 'dsawardekar/wordpress.vim'
+Bundle 'vim-scripts/marvim'
+Bundle 'vim-syntastic/syntastic'
+Bundle 'Quramy/tsuquyomi'
+Bundle 'leafgarland/typescript-vim'
+Bundle 'Quramy/vim-js-pretty-template'
+Bundle 'jason0x43/vim-js-indent'
+Bundle 'Yggdroot/indentLine'
+Bundle 'lvht/phpcd.vim'
+Bundle 'Shougo/deoplete.nvim'
+Bundle 'chrisbra/csv.vim'
 
-map <f12> <esc>:TlistToggle<cr>
-map <f3> :PhpSearchContext<cr>
+
+
 
 " don't screw up folds when inserting text that might affect them, until
 " leaving insert mode. foldmethod is local to the window. protect against
@@ -101,13 +125,21 @@ let g:mta_filetypes = {
         \ 'xml' : 1,
         \ 'php' : 1,
         \}
- 
 
-map <leader>m :NERDTreeFind<cr>
 
-let g:CommandTFileScanner = "git"
-set wildignore+=**/node_modules/*
-let g:CommandTMaxFiles=50000
+nnoremap <leader>m :call NERDTreeToggleInCurDir()<cr>
+
+set wildignore+=**/node_modules/*,**.git/*,**uploads/*,**.bak/*,**.png,**.jpg
+"let g:CommandTMaxFiles=500000
+"let g:CommandTMaxHeight = 30
+"let g:CommandTFileScanner = 'watchman'
+"let g:CommandTMaxCachedDirectories = 0
+"let g:CommandTInputDebounce = 200
+"let g:CommandTRecursiveMatch = 0
+
+nnoremap <leader>t :FZF<cr>
+nnoremap <leader>b :Buffers<cr>
+
 let g:ackprg = 'ag --nogroup --nocolor --column'
 nmap <leader>w :w!<cr>
 vmap č :
@@ -141,7 +173,7 @@ set undofile
 set undolevels=1000 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
 set magic
-set encoding=utf8
+set encoding=utf-8
 set nowb
 set noswapfile
 
@@ -157,27 +189,36 @@ set backspace=indent,eol,start "allow backspacing over everything in insert mode
 set hlsearch      " highlight search terms
 set incsearch     " show search matches as you type
 set smartcase     " ignore case if search pattern is all lowercase,
-                  "    case-sensitive otherwise
+"    case-sensitive otherwise
 set number        " always show line numbers
 set shiftwidth=2  " number of spaces to use for autoindenting
 set shiftround    " use multiple of shiftwidth when indenting with '<' and '>'
 set showmatch     " set show matching parenthesis
 set ignorecase    " ignore case when searching
 set pastetoggle=<F2>
-set laststatus=2 
+set laststatus=2
 set wrap
 set textwidth=80
 set linebreak
 set nolist  " list disables linebreak
-  
-  
+
+
+let g:syntastic_mode_map={'mode': 'passive'}
 let g:syntastic_auto_loc_list=2
 let g:syntastic_enable_signs=1
 "let g:syntastic_quiet_warnings=1
 let g:syntastic_quiet_messages = {'level': 'warnings'}
+let g:syntastic_php_phpcs_args = "-n --standard=Wordpress"
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_php_checkers = ['phpcs']
+let g:syntastic_check_on_open = 1
+
+
 set updatetime=500
 
-set tabstop=2 shiftwidth=2 expandtab
+set tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab
+"#set listchars=tab:▸\ ,eol:¬,space:␣
+"set list
 
 highlight SignColumn ctermfg=none ctermbg=none
 
@@ -188,8 +229,9 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP 
+autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd FileType python setlocal completeopt-=preview
 
 "allowing to open new buffer without saving current
 set hidden
@@ -200,34 +242,70 @@ let g:seoul256_background = 236
 set fillchars+=stl:\ ,stlnc:\
 
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#syntastic#enabled = 1 
+let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#eclim#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 2
 let g:airline#extensions#tabline#show_buffers = 0
 
-autocmd FileType python setlocal completeopt-=preview
 
 let NERDTreeIgnore=['__pycache__', 'node_modules', '__init__.py', '\~$']
-let g:smalls_auto_jump=1
-let g:smalls_auto_jump_timeout=0.1
-let g:smalls_exit_at_notfound=1
-nmap j <Plug>(smalls)
+let g:NERDTreeWinSize=60
+
+set fileencoding=utf-8
 
 if executable('ag')
-   set grepprg=ag\ -o\ -U\ --nogroup\ --nocolor 
+   set grepprg=ag\ -o\ -U\ --nogroup\ --nocolor
  endif
 " Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
+
+"map j gj
+"map k gk
 
 nmap <leader>y :BreakpointRemove *<cr>
 
-" change JumpTarget color to 'red'
-let g:smalls_highlight = {
-	      \ 'SmallsJumpTarget':
-	      \     [['NONE', 'NONE', 'red'],[ 'bold', 'NONE', 'red']],
-	      \ }
-
 set timeoutlen=1000 ttimeoutlen=0
+let g:workspace_session_disable_on_args = 1
+let g:workspace_autosave_always = 1
+let g:workspace_autosave_untrailspaces = 0
+let g:workspace_undodir='.undodir'
 
-au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+tnoremap <Esc> <C-\><C-n>:q!<CR>
+
+
+let g:indentLine_showFirstIndentLevel = 1
+let g:indentLine_faster = 1
+let g:codi#width = 50.00
+let g:codi#rightalign = 0
+
+
+command Php execute ":new <bar> :Codi php <bar> :startinsert"
+
+let g:typescript_compiler_binary = 'tsc'
+let g:typescript_compiler_options = '--experimentalDecorators=true --lib=es2015'
+
+map <F4> :let $VIM_DIR=expand('%:p:h')<CR>:terminal<CR>cd $VIM_DIR<CR>
+
+autocmd BufEnter term://* startinsert
+
+
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+let g:syntastic_php_checkers = ['php']
+
+  let g:syntastic_mode_map = {
+        \ "mode": "active",
+        \ "active_filetypes": ["php"],
+        \ "passive_filetypes": ["javascript"] }
+
+let g:deoplete#enable_at_startup = 1
+
+let g:deoplete#ignore_sources = get(g:, 'deoplete#ignore_sources', {})
+let g:deoplete#ignore_sources.php = ['omni']
